@@ -2,7 +2,7 @@
 
 ---
 
-## 📌 Latest Version: `v3.6.0` (2026-09-23)
+## 📌 Latest Version: `v4.0.2` (2026-10-13)
 
 > 💡 **Version Synchronization Rule**:
 > All releases must synchronize version strings across 6 files:
@@ -15,66 +15,112 @@
 
 ---
 
+### 🚀 [v4.0.2] - 2026-10-13 (Visual Clarity: Summon Floating Text Elimination)
+- **🧹 Summon Floating Text Removal**:
+  - Completely removed floating text popups upon unit summoning (`[Legendary Summon]`, `[Hero Summon]`, `[Rare Summon]`, `UnitName`).
+  - Sustained rich procedural audio fanfares and summon particle bursts with Tier 4+ shockwaves (`createShockwave`), ensuring instantaneous, tactile feedback during rapid Spacebar summoning without screen noise.
+
+---
+
+### 🚀 [v4.0.1] - 2026-10-13 (Visual Clarity: Ephemeral Text Removal & Enhanced Combat VFX)
+- **🧹 Auto-Merge Floating Text Removal**:
+  - Removed short-lived floating text banners on auto-merges (`[MYTHIC]`, `[JACKPOT!]`, `[CHAIN COMBO]`, `[LEGENDARY]`, `AUTO-MERGE: ...`) which vanished too rapidly to read.
+  - Enhanced visual punchiness with crisp radial shockwaves (`createShockwave`), high-density pixel cube bursts (`createPixelCubes`), and rich audio cues without text clutter.
+- **⚡ Skill Proc Floating Text Streamlining**:
+  - Removed ephemeral skill proc banners that cluttered the screen during fast-paced combat (`[ADMIN 400%]`, `[SUDO 8%]`, `[SIGKILL 5%]`, `[TIME STOP 5%]`, `[WAND EXECUTE]`, `[QUANTUM ERASE]`).
+  - Replaced text popups with dedicated high-impact visual effects (attribute-colored shockwaves, glitch bursts, and pixel cube showers) while retaining clean floating damage numbers (`💥 -${damage}`) on targets.
+- **🌐 Documentation Language Standardization**:
+  - Formally codified the English documentation rule in `ARCHITECTURE.md` Section 7.
+  - Standardized all repository markdown files (`README.md`, `CHANGELOG.md`, `BALANCE.md`, `ARCHITECTURE.md`) to 100% English.
+
+---
+
+### 🚀 [v4.0.0] - 2026-10-13 (Major Milestone: Instant Auto-Merge, Lucky Boss Warp & RNG Proc Overhaul)
+- **⚡ Instant Auto-Merge & Cascading Chain Reaction System**:
+  - Overhauled manual drag-and-drop merging: summoning a unit immediately checks the field for duplicate pairs and instantly merges them into a higher tier.
+  - **Cascading Chain Combos**: When newly synthesized higher-tier units match existing units on the field, cascading merges trigger in sequence (`⚡ CHAIN COMBO x2!`, `🌟 TRIPLE MERGE x3!`), awarding bonus Byte currency.
+  - **Tier 4 Auto-Synthesis & Board Jam Relief**: Identical 4T pairs automatically evolve into their designated Tier 5 Mythic. If field capacity reaches $\ge 10$ units without matching pairs, disparate 4T units automatically fuse into a random Tier 5 Mythic to prevent end-game gridlock.
+- **🏛️ Lucky Boss Warp (RNG 5-Unit Draft Deployment)**:
+  - Replaced manual warp double-clicking and re-rolls with pure fortune: upon entering boss encounters (10R, 20R, ...), 5 random units are drafted from the field and warped directly into the boss chamber.
+  - Upon boss defeat or round completion, all 5 deployed units are safely recalled back to their home base sockets.
+- **📈 Automatic BIOS Summoner Overclock on Boss Defeat (Lv.1 ~ Lv.8 MAX)**:
+  - Completely eliminated manual Byte spending on overclock level upgrades.
+  - Defeating each boss automatically levels up the summoner overclock rate (Clear 10R: Lv.2 ➡️ Clear 70R: Lv.8 MAX).
+  - Streamlines economic decision-making, allowing players to focus 100% of their Byte currency on rapid summoning and lucky merge combos.
+- **🎯 Thrilling Low-Chance RNG Skill Procs (5% ~ 10% Jackpot Rolls)**:
+  - Replaced fixed N-hit countdown cycles with thrilling, low-chance (5%~10%) RNG proc rolls calibrated around attack speeds:
+    - **`T4 Administrator Pointer`**: **8% proc chance** on attack for 400% Critical Strike (5,000 nuclear damage + 2.0s AoE Stun).
+    - **`T4 Magic Wand`**: **10% proc chance** on attack for 800 magic burst and instant execution on targets below 18% HP.
+    - **`T5 Root Superuser (SUDO)`**: **8% proc chance** on attack for 500% (750% vs Bosses) true damage strike (10,000 execute).
+    - **`T5 Ctrl + Alt + Del`**: **5% proc chance** on attack for `SIGKILL` (25% current HP wipe + 50% boss armor shred & 2% max HP true damage).
+    - **`T5 Black Hole Spinner`**: **5% proc chance** per pulse for 1.2s localized time-stop stun (3x boss damage multiplier).
+    - **`T5 Quantum Eraser`**: **6% proc chance** on hit to instantly erase enemies below 25% HP + 2 Byte cash bonus.
+    - **`T5 Cheat Engine`**: **6% proc chance** per pulse to unleash a 5s decaying corrosion debuff dealing 6% max HP/s.
+- **🖥️ UI & Control Deck Modernization**:
+  - Replaced split summon capsules with a single, wide **`[ 🎲 Summon: XX Byte (Space) ]`** button, maximizing tactile rapid summoning.
+  - Removed canvas drag-linking vectors; clicking a placed unit opens unit inspection and quick-sell (`[Sell (+XX Byte)]`).
+
+---
+
 ### 🚀 [v3.6.0] - 2026-09-23 (Anytime Boss Chamber Warp & Boss Characteristic Unit Penalty Overhaul)
-- **보스방 상시 자유 출입 시스템 (Anytime Boss Chamber Warp & Recall)**:
-  - 기존 보스 라운드(10R, 20R...) 한정 투입 제약을 전면 해제하여, 일반 라운드 중에도 언제든지 유닛을 더블클릭해 보스방으로 전진배치(최대 5기)하거나 기지로 복귀할 수 있도록 개선.
-  - 라운드 전환 및 보스 처치 시 유닛이 강제로 기지로 사출되던 로직을 제거하여, 전진배치 상태가 유지되며 플레이어가 전략적으로 원할 때만 드나들 수 있도록 완전한 통제권 부여.
-  - 보스방 중앙 하단에 상시 전진배치 수용 현황(`1P 전진배치: X/5`) 및 더블클릭 가이드를 항시 렌더링.
-- **보스 특성 기반 아군 유닛 고유 패널티 시스템 (악성코드 테마)**:
-  - **10R 팝업 스팸 봇**: 악성 팝업으로 인한 조준 시야 방해 ➡️ 보스 활성화 중 아군 전 유닛 사거리 **-20%** 감소.
-  - **20R 트로이 목마**: 14초마다 아군 유닛 1기 스파이 감염(`trojanDuration: 6.0s`) ➡️ 해당 유닛 공격 불가 + 인접 좌우 아군 슬롯 공격력 **-25%** 오염 (`🕵️ SPY` 뱃지 표시).
-  - **30R 랜섬웨어**: 필드에 배치된 유닛 중 **최고 티어 핵심 딜러 1기**를 정밀 인질 암호화 (5.0초 완전 동결).
-  - **40R 디도스 마스터**: 트래픽 과부하 공속 -30% 렉 + 공격 시 **25% 확률로 패킷 유실(Miss)** 투사체 불발.
-  - **50R 블루스크린 (BSOD)**: 10초마다 2기 메모리 덤프 충돌 (SEC 보안 속성 유닛은 50% 확률로 방화벽 저항).
-  - **60R CIH 체르노빌**: 하드웨어 과열 누적 시스템 도입 (12회 공격 시 2.0초간 강제 냉각 셧다운, `🔥 과열` 뱃지 표시).
-  - **70R 크립토재킹**: 불법 채굴 전력 강탈로 전 유닛 공속 **-25%** 상시 저하 + 공격 시 **8% 확률로 1 Byte** 채굴 강탈.
-  - **80R Y2K 밀레니엄 둠**: 세기말 타임 패러독스로 투사체 비행 속도 **-50%** 감속 & 공격 쿨타임 주기 무작위 왜곡 (0.7x ~ 1.4x 템포 교란).
+- **Anytime Boss Chamber Warp & Recall**:
+  - Removed boss-round-only deployment constraints; players can double-click units anytime during standard rounds to deploy up to 5 units into the boss chamber or recall them back to base.
+  - Eliminated automatic ejection upon round transitions and boss clear, granting players full strategic authority over forward deployments.
+  - Integrated persistent occupancy telemetry (`1P Deployed: X/5`) and double-click guidance at the bottom-center of the boss room.
+- **Malware-Themed Boss Characteristic Penalties**:
+  - **10R Popup Spam Bot**: Obstructive popups reduce all friendly unit attack ranges by **-20%** while the boss is active.
+  - **20R Trojan Horse**: Every 14s, infects 1 friendly unit as a spy (`trojanDuration: 6.0s`), disabling attacks and contaminating adjacent left/right sockets with **-25%** damage reduction (`🕵️ SPY` badge).
+  - **30R Ransomware**: Targets and locks the highest-tier active carry unit in hostage encryption (5.0s complete freeze).
+  - **40R DDoS Master**: Traffic overload imposes -30% attack speed lag and **25% Packet Loss (Miss)** chance per projectile.
+  - **50R Blue Screen of Death (BSOD)**: Every 10s causes memory dump crashes across 2 units (`SEC` security units retain 50% firewall resistance).
+  - **60R CIH Chernobyl**: Implements hardware overheating (triggers 2.0s emergency cooling shutdown every 12 attacks, labeled `🔥 OVERHEAT`).
+  - **70R Cryptojacking**: Illegal mining power drain inflicts persistent **-25%** attack speed reduction and steals **1 Byte on 8% of attacks**.
+  - **80R Y2K Millennium Doom**: Millennial time paradox reduces projectile flight speed by **-50%** and introduces random attack cooldown jitter (0.7x ~ 1.4x tempo distortion).
 
 ---
 
 ### 🚀 [v3.5.0] - 2026-09-23 (Global Pulse to Localized Surrounding AoE Conversion Overhaul)
-- **전 맵 타격 유닛의 주변 국소 범위 데미지(Surrounding AoE Aura) 전면 전환**:
-  - **휠 오브 데스 (`T4_WHEEL`)**:
-    - 공격 메커니즘을 전 맵 타격(`GLOBAL_PULSE`, 사거리 9999)에서 **`유닛 주변 180px 지속 펄스 오라(AOE_AURA)`**로 전면 전환.
-    - 범위 집중화에 맞춰 기본 공격력을 140 ➡️ **160**으로 보정하여 유닛 배치 위치와 통로 교차점 설계의 전략성 강화.
-    - 유닛 호버/클릭 시 캔버스에 180px 범위 인디케이터 링이 직관적으로 렌더링되도록 연동.
-  - **블랙홀 스피너 (`HIDDEN_BSOD_WHEEL`)**:
-    - 공격 메커니즘을 전 맵 타격(`GLOBAL_PULSE`, 사거리 9999)에서 **`유닛 주변 260px 대형 펄스 오라(AOE_AURA)`**로 전환.
-    - 기본 공격력을 480 ➡️ **520**으로 상향 보정. 260px 주변 범위 내 몬스터에게 50% 슬로우 오라 및 17타(~6초) 주기 1.2초 시간 정지(스턴) 부여.
-    - 보스방 워프 시 보스 대상 3배 집중 펄스 피해 메커니즘 정상 유지.
+- **Global Pulse to Localized Surrounding AoE Conversion**:
+  - **Wheel of Death (`T4_WHEEL`)**:
+    - Converted attack mechanism from full-screen hit (`GLOBAL_PULSE`, range 9999) to a **localized 180px pulsing aura (`AOE_AURA`)**.
+    - Rebalanced base damage from 140 ➡️ **160** to reward tactical choke point socket positioning.
+    - Added an intuitive 180px canvas range indicator ring upon hovering or selecting the unit.
+  - **Black Hole Spinner (`HIDDEN_BSOD_WHEEL`)**:
+    - Converted attack mechanism from full-screen hit (`GLOBAL_PULSE`, range 9999) to a **260px heavy pulsing aura (`AOE_AURA`)**.
+    - Increased base damage from 480 ➡️ **520**. Emits a 50% slow aura and 1.2s time-stop stun every 17 hits (~6s).
+    - Preserved 3x focused pulse damage multiplier against bosses when deployed in the boss chamber.
   - **Ctrl + Alt + Del (`HIDDEN_CTRLALTDEL`)**:
-    - 4타 주기 고유 스킬 `SIGKILL`의 몬스터 체력 25% 즉시 삭제 및 15% 이하 즉사 판정을 전 맵에서 **`유닛 주변 320px 반경`**(보스방 워프 시 9999px)으로 한정.
-    - 보스 방어력 50% 파괴 및 2% 최대체력 고정 피해 역시 유닛 주변 320px 내 보스 존재 시(또는 보스방 워프 시)에만 정밀하게 타격되도록 변경.
+    - Restricted 4-hit `SIGKILL` (25% HP deletion and sub-15% execution) from full-screen to a **320px localized radius around the unit** (9999px when warped to boss room).
+    - 50% boss defense shred and 2% max HP true damage apply only when the boss is within 320px range (or within boss chamber).
 
 ---
 
 ### 🚀 [v3.4.0] - 2026-09-23 (2-Player Co-op Hardcore Balancing & Boss Scaling Calibration)
-- **2인 플레이(AI/온라인 협동) 난이도 전면 밸런스 재조정 (방안 B 적용)**:
-  - **보스 체력 스케일링 상향**: 2인 모드 보스 최대 체력을 기존 1.0배에서 **`1.50배`**로 대폭 상향 (`maxHp = bossMaster.maxHp * 1.50`).
-    - 솔로 보스 체력(55%) 대비 **약 2.73배**로 설정되어, 10기 유닛의 집중 화력과 방깎/증폭 시너지 속에서도 60초 타임어택의 긴장감과 보스 고유 기믹(50R 포맷 카운트다운, 80R Y2K 둠)이 정상적으로 발동되도록 조정.
-  - **일반 몬스터 체력 상향**: 2인 모드 일반 몬스터 체력 배율을 기존 1.0배에서 **`1.25배`**로 상향 (솔로 0.85배 대비 약 1.47배).
-  - **몬스터 스폰 물량 및 밀도 증가**: 2인 모드 웨이브 스폰 물량을 **`+15%`** 증가 (`countMultiplier = 1.15`, 보스 라운드 미니언 18 ➡️ 20마리).
-  - **스폰 인터벌 압축**: 물량 증가에 맞춰 2인 모드 스폰 간격을 약 12% 단축하여 박진감 넘치는 웨이브 유입 유도. 트랙 100마리 오버플로우 위기감이 조성되어 협동 플레이의 도전 난이도 확보.
+- **2-Player Co-op (AI / Online) Difficulty Rebalance (Plan B)**:
+  - **Boss Health Scaling**: Scaled 2P boss max HP from 1.0x to **`1.50x`** (`maxHp = bossMaster.maxHp * 1.50`), representing ~2.73x solo boss health (55%), ensuring 60s time-attack tension and late-game boss gimmicks trigger reliably.
+  - **Minion Health Scaling**: Scaled 2P normal monster HP multiplier from 1.0x to **`1.25x`** (~1.47x solo 0.85x).
+  - **Wave Spawn Volume & Density**: Increased 2P wave spawn count by **`+15%`** (`countMultiplier = 1.15`, boss round minions 18 ➡️ 20).
+  - **Compressed Spawn Intervals**: Shortened 2P spawn intervals by ~12% to induce thrilling wave influx, ensuring 100-mob track overflow pressure challenges coordinated players.
 
 ---
 
 ### 🚀 [v3.3.0] - 2026-09-23 (Visual Comfort & Unit Attack Motion Elimination Overhaul)
-- **전 유닛 공격 모션 비활성화 (시각적 피로도 제로화)**:
-  - **1T ~ 4T 유닛**: 유닛 자체의 물리 반동, 돌진 찌르기, 45도 회전 스냅, 360도 플립, 스탬프 슬램 등 유닛 흔들림 모션을 완전히 제거(`recoil = 0`). 소켓에 안정적으로 고정된 상태에서 적을 향한 조준 방향(`targetAngle`)만 정갈하게 추적.
-  - **순수 공격 이펙트 보존**: 투사체 비행(화살, 레이저 빔, 저격탄, 마법탄 등), 다중 체인 레이저, 몬스터 피격 스파크, 둔화/기절/방깎 디버프, 플로팅 대미지 텍스트 및 사운드 효과는 100% 정상 작동.
-- **5티어 히든 신화 유닛 & 휠 오브 데스 번쩍임/과도한 모션 삭제**:
-  - `HIDDEN_CTRLALTDEL` (Ctrl + Alt + Del): 9px 후방 반동 킥, 키캡 고속 회전 가속(`recoil * 22`) 및 팽창, 흰색/빨간색/노란색 번쩍임, 전방 균열 충격파 호 삭제. 투사체 레이저 또한 눈부신 14px 광원 플레어에서 날렵하고 선명한 4px 관통 빔으로 최적화.
-  - `HIDDEN_BSOD_WHEEL` (블랙홀 스피너): 고속 회전 모션(`animTime * 3.5`, `recoil * 35`), 코어 백색 플래시, 크기 수축/팽창, 외곽 중력파 펄스 링 삭제 ➡️ 정적 고정 벡터로 변경.
-  - `T4_WHEEL` (휠 오브 데스): 상시 및 공격 시 고속 회전(`animTime * 6`, `recoil * 45`), 크기 팽창, 방사형 무지개 충격파 링 삭제 ➡️ 정적 고정 벡터로 변경.
-  - `HIDDEN_QUANTUM_ERASER`: 5.5px 돌진, 팁 백색 플래시, 브러시 고속 회전 및 양자 방출파 제거.
-  - `HIDDEN_ROOT_ADMIN`: 12px 슈퍼 런지, 방패 황금 플래시, 내부 반동 킥, 핵폭 충격파 호 제거.
-  - `HIDDEN_DEBUG_CONSOLE`: 공격 시 좌우 지터 셰이크, 테두리 점멸, 10Hz 텍스트 점멸 및 'GOD' 플래시, 와이어프레임 파동 제거.
-- **스킬 발동 시 원형 충격파 링 이펙트 제거**:
-  - `HIDDEN_CTRLALTDEL` (SIGKILL): 4타마다 소켓 위치(반경 55)와 보스 위치(반경 45)에 터지던 대형 원형 충격파(`createShockwave`) 제거.
-  - `HIDDEN_ROOT_ADMIN`: 3타 슈퍼 핵폭 시 발생하던 이중 원형 충격파(반경 48, 28) 제거.
-  - `T4_ADMIN`: 6타 버스트 시 발생하던 원형 충격파 제거.
-  - 5티어 투사체 적중 시 몹 위치에 발생하던 타격 원형 충격파 제거.
-  - `GLOBAL_PULSE` 유닛(`HIDDEN_BSOD_WHEEL`, `T4_WHEEL`)이 유닛 바로 위에 0.45초/0.55초마다 연속으로 터뜨리던 14개/8개 파티클 폭발 제거.
+- **Unit Attack Motion Elimination (Zero Visual Fatigue)**:
+  - **Tier 1 ~ 4 Units**: Completely eliminated unit physical recoil, lunges, 45-degree rotational snaps, 360-degree flips, and stamp slams (`recoil = 0`). Units stay firmly locked into sockets while smoothly tracking target angles (`targetAngle`).
+  - **Preserved Pure Combat VFX**: Fully preserved projectile flight (arrows, laser beams, sniper rounds, magic bolts), multi-chain lightning, impact sparks, slow/stun/shred debuff halos, floating damage numbers, and procedural audio.
+- **Tier 5 Mythic & T4 Wheel Flash / Motion Removal**:
+  - `HIDDEN_CTRLALTDEL` (Ctrl + Alt + Del): Removed 9px recoil kick, keycap high-speed spin acceleration (`recoil * 22`), scale pulsation, white/red/yellow flashing, and ground shockwave arcs. Streamlined projectile from 14px flare to a crisp 4px penetrating beam.
+  - `HIDDEN_BSOD_WHEEL` (Black Hole Spinner): Removed high-speed spin (`animTime * 3.5`), core white flash, scale breathing, and gravitational pulse rings ➡️ replaced with static vector geometry.
+  - `T4_WHEEL` (Wheel of Death): Removed spin rotation (`animTime * 6`), size pulsing, and radial rainbow rings ➡️ replaced with static vector geometry.
+  - `HIDDEN_QUANTUM_ERASER`: Removed 5.5px lunge, tip flash, brush high-speed spin, and quantum emission waves.
+  - `HIDDEN_ROOT_ADMIN`: Removed 12px super lunge, golden shield flash, internal recoil kick, and shockwave arcs.
+  - `HIDDEN_DEBUG_CONSOLE`: Removed jitter shake, border strobing, 10Hz text blinking, 'GOD' flash, and wireframe wave ripples.
+- **Skill Trigger Circular Shockwave Removal**:
+  - `HIDDEN_CTRLALTDEL` (SIGKILL): Removed large circular shockwaves (`createShockwave`) spawned at socket (radius 55) and boss location (radius 45).
+  - `HIDDEN_ROOT_ADMIN`: Removed dual circular shockwaves (radius 48, 28) on super strike.
+  - `T4_ADMIN`: Removed circular shockwaves on 6-hit burst.
+  - Removed circular impact shockwaves on Tier 5 projectile hits.
+  - Removed 14/8-particle burst explosions spawned directly over `GLOBAL_PULSE` units (`HIDDEN_BSOD_WHEEL`, `T4_WHEEL`).
 
 ---
 

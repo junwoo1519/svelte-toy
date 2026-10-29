@@ -2,7 +2,7 @@
 
 > **"Real-time dark cyber tactical cursor tower defense game protecting kernel memory from virus incursions."**
 
-![Version](https://img.shields.io/badge/version-3.6.0-blue.svg)
+![Version](https://img.shields.io/badge/version-4.0.2-blue.svg)
 ![Svelte](https://img.shields.io/badge/Svelte-5-orange.svg)
 ![Vite](https://img.shields.io/badge/Vite-8.2-purple.svg)
 
@@ -13,19 +13,20 @@
 - **Engine**: Svelte 5 (Runes) + Procedural HTML5 Canvas 2D + Web Audio API
 - **Gameplay**:
   - Spend Bytes to summon 25 cursor units across 5 tiers (1~4T standard + 5T Mythic Hidden Merges).
-  - Drag-and-drop deterministic unit merging.
+  - **Instant Auto-Merge & Chain Reaction**: Duplicate units automatically merge upon summoning, triggering cascading combos.
+  - **Lucky Boss Warp**: When a boss appears, 5 random field units are automatically drafted into the boss chamber.
+  - **Automatic Boss Overclock**: Defeating bosses automatically upgrades BIOS gacha summon rates (Lv.1 ~ Lv.8 MAX).
+  - **RNG Skill Procs**: High-tier legendary & mythic units unleash devastating skills on low-chance (5%~10%) proc rolls.
   - 80 rounds, 100-mob overflow limit, and 8 unique boss encounters (BSOD, CIH Chernobyl, Y2K Millennium Doom).
-  - 25.0s fast wave tempo with quick-clear time bonuses.
   - Supports Solo, AI Co-op, and real-time WebSocket 2P Co-op modes.
 
 ---
 
 ## 🕹️ Controls
-- **Summon Unit**: Click `[Summon Cursor]` button or press **`Space`**.
-- **Inspect Unit**: Click a socketed unit to view stats, archetype, and attribute.
-- **Merge Unit**: Drag and drop duplicate units to deterministically upgrade tier (with chance for Quantum Jump).
-- **Quick Sell**: Select unit and click floating `[Sell (+XX Byte)]` button.
-- **Boss Chamber**: Warp up to 5 tactical units into the boss chamber for direct boss engagement.
+- **Summon Unit**: Click **`[🎲 Summon: XX Byte]`** button or press **`Space`** (supports rapid summoning).
+- **Auto-Merge**: Duplicate units automatically merge into higher tiers (with Quantum Jump chance & chain reactions).
+- **Inspect / Sell**: Click a placed unit to inspect stats, archetype, and attribute; click floating `[Sell (+XX Byte)]` button to refund.
+- **Boss Chamber**: Automatically drafts 5 random units into the boss chamber during boss encounters (recalled on boss clear).
 
 ---
 

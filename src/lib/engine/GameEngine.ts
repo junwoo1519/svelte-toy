@@ -170,12 +170,8 @@ export class GameEngine {
 
 	public upgradeGacha(player: PlayerState): boolean {
 		if (this.stats.isGameOver) return false;
-		if (player.gachaLevel >= 10) return false;
+		if (player.gachaLevel >= 8) return false;
 
-		const cost = this.getGachaUpgradeCost(player);
-		if (cost === null || player.gold < cost) return false;
-
-		player.gold -= cost;
 		player.gachaLevel++;
 
 		const isP1 = player.id === 'p1';
@@ -198,6 +194,132 @@ export class GameEngine {
 
 		this.notifyChange();
 		return true;
+	}
+
+	/**
+	 * ⚡ AUTO-MERGE & CHAIN COMBO: Automatically merges duplicate units and cascades into chain reactions
+	 */
+	public triggerAutoMergeChain(player: PlayerState, checkSlotIndex: number, comboCount = 0): void {
+		const targetSlot = player.slots[checkSlotIndex];
+		if (!targetSlot?.unit) return;
+
+		const targetMaster = UNITS_MASTER[targetSlot.unit.unitId];
+		if (!targetMaster || targetMaster.tier >= 5) return;
+
+		// 1. Look for an identical unit in another slot (Tier 1 ~ 4)
+		let matchingSlot = player.slots.find(
+			(s) => s.index !== checkSlotIndex && s.unit && s.unit.unitId === targetSlot.unit?.unitId
+		);
+
+		// 2. Board Jam Relief: If no identical pair found, but board is crowded (>= 10 units) and target is 4T, match any other 4T
+		if (!matchingSlot && targetMaster.tier === 4) {
+			const occupied = player.slots.filter((s) => s.unit !== null).length;
+			if (occupied >= 10) {
+				matchingSlot = player.slots.find(
+					(s) => s.index !== checkSlotIndex && s.unit && UNITS_MASTER[s.unit.unitId]?.tier === 4
+				);
+			}
+		}
+
+		if (!matchingSlot || !matchingSlot.unit) return;
+
+		const sourceMaster = UNITS_MASTER[matchingSlot.unit.unitId];
+		if (!sourceMaster) return;
+
+		// Consume matching slot
+		matchingSlot.unit = null;
+		const isP1 = player.id === 'p1';
+		const nextCombo = comboCount + 1;
+
+		// 4T + 4T -> 5T Mythic
+		if (targetMaster.tier === 4 && sourceMaster.tier === 4) {
+			const isDuplicatePair = targetMaster.id === sourceMaster.id;
+			let upgradedMaster: UnitMaster;
+			if (isDuplicatePair && HIDDEN_MERGE_RECIPES[targetMaster.id]) {
+				upgradedMaster = UNITS_MASTER[HIDDEN_MERGE_RECIPES[targetMaster.id]];
+			} else {
+				upgradedMaster = getRandomUnitByTier(5);
+			}
+
+			targetSlot.unit = {
+				instanceId: `u_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+				unitId: upgradedMaster.id,
+				slotIndex: checkSlotIndex,
+				isWarped: false,
+				cooldown: 0,
+				spawnAnimTimer: 0.85
+			};
+
+			if (isP1) {
+				sound.playLegendary();
+			}
+			this.createSummonEffect(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 5);
+			this.createShockwave(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 40, 0.45);
+			this.createPixelCubes(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 14);
+			return; // 5T cannot merge further
+		}
+
+		// 1T ~ 3T Merges
+		const rand = Math.random();
+		let superCritChance = 0.02; // 2% quantum jump
+		if (targetMaster.tier === 3) superCritChance = 0.01;
+
+		if (rand < superCritChance) {
+			// Quantum Jump (+2 Tiers)
+			const jumpTier = Math.min(5, targetMaster.tier + 2) as 3 | 4 | 5;
+			const upgradedMaster = getRandomUnitByTier(jumpTier);
+			targetSlot.unit = {
+				instanceId: `u_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+				unitId: upgradedMaster.id,
+				slotIndex: checkSlotIndex,
+				isWarped: false,
+				cooldown: 0,
+				spawnAnimTimer: jumpTier === 5 ? 0.85 : 0.65
+			};
+
+			if (isP1) {
+				sound.playSuperCritical();
+			}
+			this.createSummonEffect(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, jumpTier);
+			this.createShockwave(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 35, 0.4);
+			this.createPixelCubes(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 10);
+
+			// Cascade if tier < 5
+			if (jumpTier < 5) {
+				this.triggerAutoMergeChain(player, checkSlotIndex, nextCombo);
+			}
+		} else {
+			// Normal Merge (+1 Tier)
+			const nextTier = (targetMaster.tier + 1) as 2 | 3 | 4;
+			const upgradedMaster = getRandomUnitByTier(nextTier);
+			const isTier4 = nextTier === 4;
+			targetSlot.unit = {
+				instanceId: `u_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+				unitId: upgradedMaster.id,
+				slotIndex: checkSlotIndex,
+				isWarped: false,
+				cooldown: 0,
+				spawnAnimTimer: isTier4 ? 0.65 : 0.5
+			};
+
+			if (isP1) {
+				if (nextCombo > 1) {
+					sound.playSuperCritical();
+				} else if (isTier4) {
+					sound.playLegendary();
+				} else {
+					sound.playMerge();
+				}
+			}
+			this.createSummonEffect(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, nextTier);
+			this.createShockwave(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, isTier4 ? 32 : 24, 0.35);
+			if (isTier4 || nextCombo > 1) {
+				this.createPixelCubes(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 8);
+			}
+
+			// Cascade
+			this.triggerAutoMergeChain(player, checkSlotIndex, nextCombo);
+		}
 	}
 
 	public summonUnit(player: PlayerState): boolean {
@@ -229,20 +351,23 @@ export class GameEngine {
 		if (player.id === 'p1') {
 			if (master.tier >= 4) {
 				sound.playLegendary();
-				this.addFloatingText(slot.x, slot.y - 24, `👑 [전설 직뽑] ${master.name}!`, '#FBBF24', 17);
 			} else if (master.tier === 3) {
 				sound.playSuperCritical();
-				this.addFloatingText(slot.x, slot.y - 20, `💎 [영웅 직뽑] ${master.name}!`, '#A855F7', 15);
 			} else if (master.tier === 2) {
 				sound.playMerge();
-				this.addFloatingText(slot.x, slot.y - 18, `✨ [희귀 직뽑] ${master.name}`, '#38BDF8', 14);
 			} else {
 				sound.playSummon();
-				this.addFloatingText(slot.x, slot.y - 18, `✨ ${master.name}`, master.themeColor, 14);
 			}
 		}
 
 		this.createSummonEffect(slot.x, slot.y, master.themeColor, master.tier);
+		if (master.tier >= 4) {
+			this.createShockwave(slot.x, slot.y, master.themeColor, 30, 0.35);
+		}
+
+		// ⚡ AUTO-MERGE & CHAIN COMBO: Check duplicate pair and cascade
+		this.triggerAutoMergeChain(player, slot.index, 0);
+
 		this.notifyChange();
 		return true;
 	}
@@ -286,10 +411,10 @@ export class GameEngine {
 
 			if (isP1) {
 				sound.playSuperCritical();
-				const banner = isDuplicatePair ? `🚨 [MYTHIC 지정 각성!]` : `🎲 [MYTHIC 융합 각성!]`;
-				this.addFloatingText(targetSlot.x, targetSlot.y - 32, `${banner} ${upgradedMaster.name} 강림!`, upgradedMaster.themeColor, 22);
 			}
 			this.createSummonEffect(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 5);
+			this.createShockwave(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 40, 0.45);
+			this.createPixelCubes(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 14);
 
 			this.notifyChange();
 			return true;
@@ -324,9 +449,10 @@ export class GameEngine {
 
 			if (isP1) {
 				sound.playSuperCritical();
-				this.addFloatingText(targetSlot.x, targetSlot.y - 30, `🌟 [JACKPOT! +2티어 점프] T${jumpTier} ${upgradedMaster.name}!`, '#FBBF24', 22);
 			}
 			this.createSummonEffect(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, jumpTier);
+			this.createShockwave(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 35, 0.4);
+			this.createPixelCubes(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 10);
 		} else {
 			// ✅ 100% GUARANTEED NORMAL SUCCESS (+1 Tier)
 			const nextTier = (currentMaster.tier + 1) as 2 | 3 | 4;
@@ -344,13 +470,15 @@ export class GameEngine {
 			if (isP1) {
 				if (isTier4) {
 					sound.playLegendary();
-					this.addFloatingText(targetSlot.x, targetSlot.y - 28, `👑 [LEGENDARY] ${upgradedMaster.name} 각성!`, '#FBBF24', 20);
 				} else {
 					sound.playMerge();
-					this.addFloatingText(targetSlot.x, targetSlot.y - 20, `★ MERGE: ${upgradedMaster.name}!`, upgradedMaster.themeColor, 16);
 				}
 			}
 			this.createSummonEffect(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, nextTier);
+			this.createShockwave(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, isTier4 ? 32 : 24, 0.35);
+			if (isTier4) {
+				this.createPixelCubes(targetSlot.x, targetSlot.y, upgradedMaster.themeColor, 8);
+			}
 		}
 
 		this.notifyChange();
@@ -428,6 +556,63 @@ export class GameEngine {
 		return true;
 	}
 
+	public luckyBossWarp(player: PlayerState): void {
+		// Reset previous warped status
+		for (const slot of player.slots) {
+			if (slot.unit) slot.unit.isWarped = false;
+		}
+
+		// Find occupied slots
+		const occupied = player.slots.filter((s) => s.unit !== null);
+		if (occupied.length === 0) return;
+
+		// Shuffle and pick up to 5 random units
+		const shuffled = [...occupied].sort(() => Math.random() - 0.5);
+		const chosen = shuffled.slice(0, 5);
+
+		for (const slot of chosen) {
+			if (!slot.unit) continue;
+			slot.unit.isWarped = true;
+			const warpPos = player.warpSlots[slot.index];
+			const destX = warpPos ? warpPos.x : slot.x;
+			const destY = warpPos ? warpPos.y : slot.y;
+			this.createParticles(slot.x, slot.y, '#FBBF24', 8);
+			this.createParticles(destX, destY, '#FBBF24', 12);
+			this.createShockwave(destX, destY, '#FBBF24', 25, 0.35);
+		}
+
+		if (player.id === 'p1') {
+			sound.playBossAlert();
+			this.addFloatingText(
+				GameEngine.BOSS_CENTER_X - 100,
+				GameEngine.BOSS_CENTER_Y + 140,
+				`🎲 [보스 참전] 무작위 ${chosen.length}기 긴급 출격!`,
+				'#FBBF24',
+				16
+			);
+		}
+	}
+
+	public recallAllWarpedUnits(player: PlayerState): void {
+		let recalledCount = 0;
+		for (const slot of player.slots) {
+			if (slot.unit && slot.unit.isWarped) {
+				slot.unit.isWarped = false;
+				recalledCount++;
+				this.createParticles(slot.x, slot.y, '#38BDF8', 6);
+			}
+		}
+		if (recalledCount > 0 && player.id === 'p1') {
+			this.addFloatingText(
+				GameEngine.BOSS_CENTER_X - 100,
+				GameEngine.BOSS_CENTER_Y + 140,
+				'↩️ 전 유닛 기지 복귀!',
+				'#38BDF8',
+				15
+			);
+		}
+	}
+
 	public startRound(round: number) {
 		this.stats.currentRound = round;
 		this.stats.isBossRound = round % 10 === 0;
@@ -459,11 +644,23 @@ export class GameEngine {
 				this.bossWarningName = bossMaster.name;
 				sound.playBossAlert();
 				this.addFloatingText(GameEngine.BOSS_CENTER_X, GameEngine.BOSS_CENTER_Y - 80, `⚠️ BOSS: ${bossMaster.name} 출현!`, '#EF4444', 24);
+
+				// 🎲 LUCKY BOSS WARP: Automatically draft up to 5 random units into the boss room!
+				this.luckyBossWarp(this.p1);
+				if (!isSolo) {
+					this.luckyBossWarp(this.p2);
+				}
 			}
 		} else {
 			this.boss = null;
 			this.bossWarningTimer = 0;
 			this.bossWarningName = '';
+
+			// Ensure all units are returned to base in normal rounds
+			this.recallAllWarpedUnits(this.p1);
+			if (this.stats.gameMode !== 'SOLO') {
+				this.recallAllWarpedUnits(this.p2);
+			}
 		}
 
 		// Setup spawn configs & reset counters
@@ -475,7 +672,6 @@ export class GameEngine {
 		this.spawnedCountP1 = 0;
 		this.spawnedCountP2 = 0;
 
-		// Warped unit placements are preserved freely across rounds
 		this.notifyChange();
 	}
 
@@ -673,6 +869,12 @@ export class GameEngine {
 		if (this.stats.currentRound >= this.stats.maxRound) {
 			this.triggerGameWin();
 			return;
+		}
+
+		// Recall all warped units back to base between rounds
+		this.recallAllWarpedUnits(this.p1);
+		if (this.stats.gameMode !== 'SOLO') {
+			this.recallAllWarpedUnits(this.p2);
 		}
 
 		// Next round
@@ -1321,44 +1523,41 @@ export class GameEngine {
 			baseDmg *= 2.0;
 			if (isP1) sound.playCrit();
 		} else if (master.id === 'T4_ADMIN') {
-			// Periodic burst: every 6th attack deals 400% (2,080 DMG)
-			unit.skillCooldown = (unit.skillCooldown || 0) + 1;
-			if (unit.skillCooldown >= 6) {
-				unit.skillCooldown = 0;
+			// 8% chance to trigger 400% crit (5,000 DMG burst)
+			if (Math.random() < 0.08) {
 				isCrit = true;
 				baseDmg *= 4.0;
 				if (isP1) sound.playCrit();
-				this.createPixelCubes(startX, startY, '#FBBF24', 8);
+				this.createPixelCubes(startX, startY, '#FBBF24', 12);
+				this.createShockwave(startX, startY, '#FBBF24', 32, 0.35);
 			}
 		} else if (master.id === 'HIDDEN_ROOT_ADMIN') {
-			// 100% Crit + 3-hit 500% (750% to Boss) Super Nuclear Burst
+			// 100% baseline Crit + 8% chance to trigger 500% (750% to Boss) Super Nuclear Burst
 			isCrit = true;
-			unit.skillCooldown = (unit.skillCooldown || 0) + 1;
-			if (unit.skillCooldown >= 3) {
-				unit.skillCooldown = 0;
+			if (Math.random() < 0.08) {
 				const isBossTarget = targetWrap?.type === 'boss';
 				baseDmg *= isBossTarget ? 7.5 : 5.0;
 				if (isP1) {
 					sound.playCrit();
 					sound.playLegendary();
 				}
-				this.createPixelCubes(startX, startY, '#F59E0B', 14);
+				this.createPixelCubes(startX, startY, '#F59E0B', 16);
+				this.createShockwave(startX, startY, '#F59E0B', 40, 0.4);
 			} else {
 				baseDmg *= 2.0;
 				if (isP1) sound.playCrit();
 			}
 		} else if (master.id === 'HIDDEN_CTRLALTDEL') {
-			// SIGKILL: Every 4th attack triggers global process termination
-			unit.skillCooldown = (unit.skillCooldown || 0) + 1;
-			if (unit.skillCooldown >= 4) {
-				unit.skillCooldown = 0;
+			// 5% chance to trigger SIGKILL surrounding process termination
+			if (Math.random() < 0.05) {
 				isCrit = true;
 				baseDmg *= 1.5;
 				if (isP1) {
 					sound.playCrit();
 					sound.playLegendary();
 				}
-				this.createGlitchBurst(startX, startY, '#FF0055', 10);
+				this.createGlitchBurst(startX, startY, '#FF0055', 14);
+				this.createShockwave(startX, startY, '#FF0055', 38, 0.35);
 
 				// Surrounding monster health reduction & execute (320px radius, or 9999px if warped)
 				const execRadius = unit.isWarped ? 9999 : 320;
@@ -1386,7 +1585,8 @@ export class GameEngine {
 					const bossCutHp = Math.round(this.boss.maxHp * 0.02); // 2% Max HP true boss damage
 					this.boss.hp -= bossCutHp;
 					this.createParticles(bx, by, '#FF0055', 14);
-					this.addDamageFloatingText(bx, by - 25, `💥 -${bossCutHp} (SIGKILL 2% 파괴)`, '#FF0055', 17);
+					this.createShockwave(bx, by, '#FF0055', 45, 0.4);
+					this.addDamageFloatingText(bx, by - 25, `💥 -${bossCutHp}`, '#FF0055', 17);
 				}
 			}
 		}
@@ -1503,13 +1703,14 @@ export class GameEngine {
 
 			let triggerTimeStop = false;
 			if (isBlackhole) {
-				unit.skillCooldown = (unit.skillCooldown || 0) + 1;
-				triggerTimeStop = (unit.skillCooldown || 0) >= 17; // ~6 seconds (0.35s * 17)
+				// 5% chance per aura pulse to freeze time for 1.2s
+				triggerTimeStop = Math.random() < 0.05;
 				if (triggerTimeStop) {
-					unit.skillCooldown = 0;
 					if (isP1) {
 						sound.playLegendary();
 					}
+					this.createShockwave(startX, startY, '#818CF8', 42, 0.4);
+					this.createPixelCubes(startX, startY, '#818CF8', 12);
 				}
 			}
 
@@ -1547,6 +1748,12 @@ export class GameEngine {
 						m.armorDownDuration = 2.5;
 						m.damageAmpRate = 0.5;
 						m.damageAmpDuration = 2.5;
+						if (Math.random() < 0.06) {
+							const decayDmg = Math.round(m.maxHp * 0.06);
+							m.hp -= decayDmg;
+							this.createGlitchBurst(m.x, m.y, '#10B981', 6);
+							this.addDamageFloatingText(m.x, m.y - 14, `☣️ -${decayDmg}`, '#10B981', 14);
+						}
 						this.applyDamageToMonster(player, m, baseDmg, true, master);
 					}
 				}
@@ -1708,19 +1915,24 @@ export class GameEngine {
 			finalDmg = Math.round(finalDmg * (1 + m.damageAmpRate));
 		}
 
-		// Magic wand % HP & Execute
+		// Magic wand % HP & Execute (10% RNG proc chance)
 		if (master.id === 'T4_MAGICWAND') {
 			finalDmg += Math.round(m.hp * 0.03);
-			if (m.hp / m.maxHp <= 0.18) {
-				finalDmg = m.hp; // Execute!
+			if (m.hp / m.maxHp <= 0.18 && Math.random() < 0.10) {
+				finalDmg = m.hp; // 10% Execute!
+				if (player.id === 'p1') sound.playCrit();
+				this.createShockwave(m.x, m.y, '#FBBF24', 28, 0.3);
+				this.createParticles(m.x, m.y, '#FBBF24', 8);
 			}
 		} else if (master.id === 'HIDDEN_QUANTUM_ERASER') {
-			// Quantum Eraser: 5% current HP damage + 25% execute & bonus gold
+			// Quantum Eraser: 5% current HP damage + 6% execute & bonus gold
 			finalDmg += Math.round(m.hp * 0.05);
-			if (m.hp / m.maxHp <= 0.25) {
+			if (m.hp / m.maxHp <= 0.25 && Math.random() < 0.06) {
 				finalDmg = m.hp;
 				player.gold += 2;
-				this.addFloatingText(m.x, m.y - 15, '+2 Byte', '#FACC15', 13);
+				this.createShockwave(m.x, m.y, '#FACC15', 30, 0.3);
+				this.createPixelCubes(m.x, m.y, '#FACC15', 8);
+				this.createByteAbsorptionEffect(m.x, m.y, player.id, 2);
 			}
 		}
 
@@ -1875,6 +2087,35 @@ export class GameEngine {
 
 			// Warped units remain in boss chamber unless recalled by player
 
+			// ⚡ AUTO BIOS OVERCLOCK ON BOSS DEFEAT (Lv.1 -> Lv.8 MAX)
+			if (this.p1.gachaLevel < 8) {
+				this.p1.gachaLevel++;
+				const nextConfig = GACHA_LEVEL_CONFIG[this.p1.gachaLevel];
+				sound.playSuperCritical();
+				this.addFloatingText(
+					bx,
+					by - 45,
+					`⚡ [보스 격퇴 특전] BIOS 소환기 Lv.${this.p1.gachaLevel} 자동 승급!`,
+					'#FBBF24',
+					20
+				);
+				if (nextConfig) {
+					this.addFloatingText(bx, by - 22, nextConfig.shortRates, '#38BDF8', 14);
+				}
+			}
+			if (this.stats.gameMode !== 'SOLO' && this.p2.gachaLevel < 8) {
+				this.p2.gachaLevel++;
+			}
+
+			// Recall all warped units back to base sockets
+			this.recallAllWarpedUnits(this.p1);
+			if (this.stats.gameMode !== 'SOLO') {
+				this.recallAllWarpedUnits(this.p2);
+			}
+
+			this.boss = null;
+			this.popups = [];
+
 			if (this.stats.currentRound >= this.stats.maxRound) {
 				this.triggerGameWin();
 			} else {
@@ -1885,49 +2126,13 @@ export class GameEngine {
 
 	private updateAi(dt: number) {
 		this.aiActionTimer += dt;
-		if (this.aiActionTimer < 1.0) return;
+		if (this.aiActionTimer < 0.6) return;
 		this.aiActionTimer = 0;
-
-		// AI Boss Warp Management (Automatically keep top 5 strongest units deployed in boss room)
-		if (this.boss) {
-			const activeUnits = this.p2.slots
-				.filter((s) => s.unit !== null)
-				.map((s) => ({
-					slotIndex: s.index,
-					unit: s.unit!,
-					tier: UNITS_MASTER[s.unit!.unitId]?.tier || 1,
-					damage: UNITS_MASTER[s.unit!.unitId]?.damage || 0
-				}));
-
-			activeUnits.sort((a, b) => (b.tier !== a.tier ? b.tier - a.tier : b.damage - a.damage));
-			const top5Slots = new Set(activeUnits.slice(0, 5).map((u) => u.slotIndex));
-
-			for (const s of this.p2.slots) {
-				if (s.unit) {
-					s.unit.isWarped = top5Slots.has(s.index);
-				}
-			}
-		} else {
-			for (const s of this.p2.slots) {
-				if (s.unit?.isWarped) {
-					s.unit.isWarped = false;
-				}
-			}
-		}
-
-		// AI Gacha Overclock Upgrade logic
-		if (this.p2.gachaLevel < 10) {
-			const upgradeCost = this.getGachaUpgradeCost(this.p2);
-			if (upgradeCost !== null && this.p2.gold >= upgradeCost + 70) {
-				this.upgradeGacha(this.p2);
-				return;
-			}
-		}
 
 		const cost = this.getSummonCost(this.p2);
 		const emptySlots = this.p2.slots.filter((s) => s.unit === null);
 
-		// AI Summon logic
+		// AI Summon logic (summonUnit will automatically trigger autoMergeChain)
 		if (this.p2.gold >= cost && emptySlots.length > 0) {
 			this.summonUnit(this.p2);
 			return;

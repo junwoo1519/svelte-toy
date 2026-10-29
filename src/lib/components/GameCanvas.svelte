@@ -17,8 +17,6 @@
 	let isHoveringSellBtn = $state(false);
 	let isHoveringSummonP1 = $state(false);
 	let isHoveringSummonP2 = $state(false);
-	let isHoveringUpgradeP1 = $state(false);
-	let isHoveringUpgradeP2 = $state(false);
 
 	onMount(() => {
 		if (!canvasEl) return;
@@ -421,25 +419,25 @@
 			ctx.restore();
 		}
 
-		// Draw Flank Warp Capacity Badges (Always visible so players can freely warp units anytime)
+		// Draw Flank Warp Capacity Badges
 		const p1Warped = engine.p1.slots.filter((s) => s.unit?.isWarped).length;
 		ctx.font = 'bold 11px "Pretendard", sans-serif';
 		ctx.fillStyle = p1Warped >= 5 ? '#fef08a' : '#38bdf8';
 		ctx.textAlign = 'left';
-		ctx.fillText(`1P 전진배치: ${p1Warped}/5${p1Warped >= 5 ? ' (MAX)' : ''}`, bx - 145, by + 158);
+		ctx.fillText(`1P 보스참전: ${p1Warped}/5`, bx - 145, by + 158);
 
 		if (engine.stats.gameMode !== 'SOLO') {
 			const p2Warped = engine.p2.slots.filter((s) => s.unit?.isWarped).length;
 			ctx.fillStyle = p2Warped >= 5 ? '#fef08a' : '#c084fc';
 			ctx.textAlign = 'right';
-			ctx.fillText(`2P 전진배치: ${p2Warped}/5${p2Warped >= 5 ? ' (MAX)' : ''}`, bx + 145, by + 158);
+			ctx.fillText(`2P 보스참전: ${p2Warped}/5`, bx + 145, by + 158);
 		}
 
-		// Tactical Double-Click Guide
+		// Lucky Warp Guide
 		ctx.textAlign = 'center';
 		ctx.font = 'bold 10px "Pretendard", sans-serif';
 		ctx.fillStyle = '#fde047';
-		ctx.fillText('💡 [유닛 더블클릭]: 보스방 투입 / 기지 복귀 (상시 자유 이동)', bx, by + 180);
+		ctx.fillText('🎲 [보스전 발발 시]: 필드 유닛 중 무작위 5기 자동 참전 (보스 처치 시 복귀)', bx, by + 180);
 	}
 
 	// ----------------------------------------------------
@@ -767,11 +765,10 @@
 				ctx.stroke();
 			}
 
-			// Dual Capsule Action Buttons inside Center Hub
-			// Left Capsule: [ 소환 (Space) ]
+			// Unified High-Visibility Summon Button inside Center Hub
 			const summonBtnRect = isP1 ? getSummonP1ButtonRect() : getSummonP2ButtonRect();
-			const summonTitle = `➕ ${cost}B`;
-			const summonSubtext = isInteractive ? '[Space]' : (isP1 ? '[1P]' : '[2P]');
+			const summonTitle = `🎲 소환: ${cost} Byte`;
+			const summonSubtext = isInteractive ? '[Space 연속 뽑기]' : (isP1 ? '[1P 소환]' : '[2P 소환]');
 			drawTacticalButton(
 				ctx,
 				summonBtnRect,
@@ -780,24 +777,6 @@
 				isHoveredSummon,
 				canSummon,
 				'#38bdf8'
-			);
-
-			// Right Capsule: [ 강화 (U) ]
-			const upgradeBtnRect = isP1 ? getUpgradeP1ButtonRect() : getUpgradeP2ButtonRect();
-			const upgradeCost = engine.getGachaUpgradeCost(player);
-			const canUpgrade = isInteractive && upgradeCost !== null && player.gold >= upgradeCost;
-			const isHoveredUpgrade = isP1 ? isHoveringUpgradeP1 : isHoveringUpgradeP2;
-
-			const upgradeTitle = upgradeCost !== null ? `⚡ ${upgradeCost}B` : 'MAX';
-			const upgradeSubtext = upgradeCost !== null ? (isInteractive ? '[ U ]' : '[강화]') : '[완료]';
-			drawTacticalButton(
-				ctx,
-				upgradeBtnRect,
-				upgradeTitle,
-				upgradeSubtext,
-				isHoveredUpgrade,
-				upgradeCost !== null ? canUpgrade : true,
-				upgradeCost !== null ? '#22c55e' : '#f59e0b'
 			);
 		}
 		ctx.restore();
@@ -1490,19 +1469,19 @@
 	}
 
 	function getSummonP1ButtonRect() {
-		return { x: GameEngine.P1_CENTER_X - 60, y: GameEngine.P1_CENTER_Y + 10, w: 57, h: 38 };
+		return { x: GameEngine.P1_CENTER_X - 58, y: GameEngine.P1_CENTER_Y + 10, w: 116, h: 38 };
 	}
 
 	function getSummonP2ButtonRect() {
-		return { x: GameEngine.P2_CENTER_X - 60, y: GameEngine.P2_CENTER_Y + 10, w: 57, h: 38 };
+		return { x: GameEngine.P2_CENTER_X - 58, y: GameEngine.P2_CENTER_Y + 10, w: 116, h: 38 };
 	}
 
 	function getUpgradeP1ButtonRect() {
-		return { x: GameEngine.P1_CENTER_X + 3, y: GameEngine.P1_CENTER_Y + 10, w: 57, h: 38 };
+		return { x: -999, y: -999, w: 0, h: 0 };
 	}
 
 	function getUpgradeP2ButtonRect() {
-		return { x: GameEngine.P2_CENTER_X + 3, y: GameEngine.P2_CENTER_Y + 10, w: 57, h: 38 };
+		return { x: -999, y: -999, w: 0, h: 0 };
 	}
 
 	function drawTacticalButton(
@@ -2379,67 +2358,21 @@
 			return;
 		}
 
-		// 3. Check if 1P or 2P Overclock Upgrade Button was clicked
-		const p1UpRect = getUpgradeP1ButtonRect();
-		if (!isLocalP2 && isPointInRect(pos.x, pos.y, p1UpRect)) {
-			if (gameStore.canUpgradeGachaP1) gameStore.upgradeGachaP1();
-			return;
-		}
-
-		const p2UpRect = getUpgradeP2ButtonRect();
-		if (isLocalP2 && isPointInRect(pos.x, pos.y, p2UpRect)) {
-			if (gameStore.canUpgradeGachaP2) gameStore.upgradeGachaP2();
-			return;
-		}
-
-		// 4. Check if a Slot was clicked
+		// 3. Check if a Slot was clicked (Selects unit to view stats & enable Quick-Sell)
 		const slotInfo = findSlotAt(pos.x, pos.y);
-		const now = performance.now();
-		const isDoubleClick =
-			lastClickSlot &&
-			slotInfo &&
-			lastClickSlot.player === slotInfo.player &&
-			lastClickSlot.index === slotInfo.index &&
-			now - lastClickTime < 340;
-
-		lastClickTime = now;
-		lastClickSlot = slotInfo;
-
-		if (isDoubleClick && slotInfo) {
-			const myRole = engine.stats.gameMode === 'ONLINE_COOP' && gameStore.netRole === 'p2' ? 'p2' : 'p1';
-			if (slotInfo.player === myRole) {
-				if (engine.stats.gameMode === 'ONLINE_COOP' && gameStore.netRole === 'p2') {
-					multiplayer.sendP2Action({
-						type: 'TOGGLE_WARP',
-						slotIndex: slotInfo.index
-					});
-				} else {
-					const player = slotInfo.player === 'p1' ? engine.p1 : engine.p2;
-					engine.toggleUnitWarp(player, slotInfo.index);
-				}
-			}
-			engine.selectedSlot = slotInfo;
-			mouseDownPos = null;
-			isDraggingActive = false;
-			gameStore.sync();
-			return;
-		}
-
 		if (slotInfo) {
-			mouseDownPos = pos;
-			isDraggingActive = false;
 			engine.selectedSlot = slotInfo;
 		} else {
 			engine.selectedSlot = null;
-			mouseDownPos = null;
-			isDraggingActive = false;
 		}
+
+		mouseDownPos = null;
+		isDraggingActive = false;
 		gameStore.sync();
 	}
 
 	function handleMouseMove(e: MouseEvent) {
 		const pos = getCanvasCoords(e);
-		const engine = gameStore.engine;
 		hoveredSlot = findSlotAt(pos.x, pos.y);
 
 		// Check hover on Summon Buttons
@@ -2450,13 +2383,6 @@
 		const p2BtnRect = getSummonP2ButtonRect();
 		isHoveringSummonP2 = isLocalP2 && isPointInRect(pos.x, pos.y, p2BtnRect);
 
-		// Check hover on Upgrade Buttons
-		const p1UpRect = getUpgradeP1ButtonRect();
-		isHoveringUpgradeP1 = !isLocalP2 && isPointInRect(pos.x, pos.y, p1UpRect);
-
-		const p2UpRect = getUpgradeP2ButtonRect();
-		isHoveringUpgradeP2 = isLocalP2 && isPointInRect(pos.x, pos.y, p2UpRect);
-
 		// Check hover on Quick-Sell Button
 		const sellBtnRect = getQuickSellButtonRect();
 		isHoveringSellBtn = sellBtnRect !== null && isPointInRect(pos.x, pos.y, sellBtnRect);
@@ -2466,8 +2392,6 @@
 			if (
 				(isHoveringSummonP1 && gameStore.canSummonP1) ||
 				(isHoveringSummonP2 && gameStore.canSummonP2) ||
-				(isHoveringUpgradeP1 && gameStore.canUpgradeGachaP1) ||
-				(isHoveringUpgradeP2 && gameStore.canUpgradeGachaP2) ||
 				isHoveringSellBtn ||
 				hoveredSlot !== null
 			) {
@@ -2476,59 +2400,9 @@
 				canvasEl.style.cursor = 'default';
 			}
 		}
-
-		// Check drag start threshold (> 6px) - ONLY allowed for own player
-		if (mouseDownPos && engine.selectedSlot) {
-			const myRole = engine.stats.gameMode === 'ONLINE_COOP' && gameStore.netRole === 'p2' ? 'p2' : 'p1';
-			if (engine.selectedSlot.player === myRole) {
-				const dist = Math.hypot(pos.x - mouseDownPos.x, pos.y - mouseDownPos.y);
-				if (dist > 6) {
-					const player = engine.selectedSlot.player === 'p1' ? engine.p1 : engine.p2;
-					const slot = player.slots[engine.selectedSlot.index];
-					if (slot?.unit) {
-						isDraggingActive = true;
-						engine.draggingUnit = {
-							player: engine.selectedSlot.player,
-							slotIndex: engine.selectedSlot.index,
-							unit: slot.unit
-						};
-					}
-				}
-			}
-		}
-
-		if (engine.draggingUnit && isDraggingActive) {
-			engine.dragPos = pos;
-		}
 	}
 
-	function handleMouseUp(e: MouseEvent) {
-		const engine = gameStore.engine;
-		if (engine.draggingUnit && isDraggingActive) {
-			const pos = getCanvasCoords(e);
-			const targetSlot = findSlotAt(pos.x, pos.y);
-
-			if (
-				targetSlot &&
-				targetSlot.player === engine.draggingUnit.player &&
-				targetSlot.index !== engine.draggingUnit.slotIndex
-			) {
-				if (engine.stats.gameMode === 'ONLINE_COOP' && gameStore.netRole === 'p2') {
-					multiplayer.sendP2Action({
-						type: 'MERGE',
-						fromSlot: engine.draggingUnit.slotIndex,
-						toSlot: targetSlot.index
-					});
-				} else {
-					const player = engine.draggingUnit.player === 'p1' ? engine.p1 : engine.p2;
-					engine.mergeUnits(player, engine.draggingUnit.slotIndex, targetSlot.index);
-				}
-				engine.selectedSlot = null;
-			}
-
-			engine.draggingUnit = null;
-		}
-
+	function handleMouseUp() {
 		mouseDownPos = null;
 		isDraggingActive = false;
 		gameStore.sync();

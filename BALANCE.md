@@ -1,8 +1,8 @@
 # ⚖️ Cursor Defense - Official Balance Master Datasheet
 
-> **Version**: `v3.6.0` (2026-09-23 Release)  
+> **Version**: `v4.0.2` (2026-10-13 Release)  
 > **Environment**: 80 Rounds / 1280x720 Viewport / 12 Sockets / 5 Tiers (25 Fixed Units)  
-> **Core Objective**: Prevent low-tier multi-hit boss melts post-40R; enforce high-tier (4~5T) elite synthesis consolidation via a 10-level paced gacha overclock economy.
+> **Core Objective**: Instant Auto-Merge & Chain Reaction, Lucky Boss Room Warp (RNG 5-unit draft), Boss Defeat Auto Overclock (Lv.1~Lv.8 MAX), and Thrilling Low-Chance (5%~10%) RNG Skill Procs.
 
 ---
 
@@ -68,20 +68,20 @@ Roles are strictly differentiated via trade-offs across attack speed, single-hit
 
 ---
 
-### [3-2] Tier 4 ~ Tier 5 (Legendary / Mythic Hidden)
+### [3-2] Tier 4 ~ Tier 5 (Legendary / Mythic Hidden - v4.0.0 RNG Proc System)
 
-| Tier | Unit ID | Name | Attr | Archetype | DMG | AS (s) | Range | DPS | Skill & Special Effect |
+| Tier | Unit ID | Name | Attr | Archetype | DMG | AS (s) | Range | DPS | Skill & Special Effect (RNG Proc) |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---|
 | **4T** | `T4_WHEEL` | Wheel of Death | `NET` | `AOE` | 160 | 0.55 | 180 | 290.9 | Localized 180px surrounding pulse DMG + 35% slow aura |
-| **4T** | `T4_MAGICWAND`| Magic Wand | `BIT` | `HEAVY` | 850 | 0.90 | 220 | 944.4 | Target 3% current HP bonus DMG + 18% execute |
-| **4T** | `T4_ADMIN` | Admin Pointer | `BIT` | `HEAVY` | 1,250 | 1.20 | 250 | 1,041.7 | **Every 6th hit: 400% crit (5,000 burst DMG)** |
+| **4T** | `T4_MAGICWAND`| Magic Wand | `BIT` | `HEAVY` | 850 | 0.90 | 220 | 944.4 | Target 3% HP bonus DMG + **10% chance to execute $\le 18\%$ HP** |
+| **4T** | `T4_ADMIN` | Admin Pointer | `BIT` | `HEAVY` | 1,250 | 1.20 | 250 | 1,041.7 | **Attack 8% chance: 400% crit (5,000 burst DMG)** |
 | **4T** | `T4_CONSOLE` | Dev Console | `SEC` | `SUPP` | 220 | 0.75 | 210 | 293.3 | Permanent 50% armor shred + 30% DMG amp aura |
 | **4T** | `T4_TASKMASTER`| Taskmaster | `NET` | `SUPP` | 0 | - | 9999 | 0.0 | [Unique Passive] Global team AS +25%, Crit +12% buff (non-stacking) |
-| **5T** | `HIDDEN_CTRLALTDEL` | Ctrl+Alt+Del | `SEC` | `RAPID` | 950 | 0.38 | 220 | 2,500.0 | [Unique] Team AS +35%, Crit +20% / 4th-hit surrounding 320px 25% SIGKILL & 50% Boss DEF shred |
-| **5T** | `HIDDEN_BSOD_WHEEL` | Blackhole Spinner| `NET` | `AOE` | 520 | 0.45 | 260 | 1,155.6 | Localized 260px surrounding 50% slow aura / 1.2s time stop every 6s / 3x warped Boss DMG |
-| **5T** | `HIDDEN_QUANTUM_ERASER`| Quantum Eraser | `BIT` | `AOE` | 720 | 0.55 | 240 | 1,309.1 | 6-chain beam + 5% HP bonus + 25% pixel execute |
-| **5T** | `HIDDEN_ROOT_ADMIN` | Root Admin (SUDO)| `BIT` | `HEAVY` | 3,600 | 1.10 | 320 | 3,272.7 | **100% Crit / Every 3rd hit: 750% burst (27,000 DMG)** |
-| **5T** | `HIDDEN_DEBUG_CONSOLE`| Cheat Engine | `SEC` | `SUPP` | 450 | 0.65 | 250 | 692.3 | 70% DEF shred + 50% DMG amp + 6%/s decay aura |
+| **5T** | `HIDDEN_CTRLALTDEL` | Ctrl+Alt+Del | `SEC` | `RAPID` | 950 | 0.38 | 220 | 2,500.0 | [Unique] Team AS +35%, Crit +20% / **Attack 5% chance: SIGKILL surrounding 320px 25% HP deletion & 50% Boss DEF shred** |
+| **5T** | `HIDDEN_BSOD_WHEEL` | Blackhole Spinner| `NET` | `AOE` | 520 | 0.45 | 260 | 1,155.6 | Surrounding 260px 50% slow aura / **Pulse 5% chance: 1.2s time stop** / 3x warped Boss DMG |
+| **5T** | `HIDDEN_QUANTUM_ERASER`| Quantum Eraser | `BIT` | `AOE` | 720 | 0.55 | 240 | 1,309.1 | 6-chain beam + 5% HP bonus + **Hit 6% chance: 25% pixel execute (+2B bonus)** |
+| **5T** | `HIDDEN_ROOT_ADMIN` | Root Admin (SUDO)| `BIT` | `HEAVY` | 3,600 | 1.10 | 320 | 3,272.7 | **100% Crit / Attack 8% chance: 500% (Boss 750%) burst (18,000 / 27,000 DMG)** |
+| **5T** | `HIDDEN_DEBUG_CONSOLE`| Cheat Engine | `SEC` | `SUPP` | 450 | 0.65 | 250 | 692.3 | 70% DEF shred + 50% DMG amp / **Pulse 6% chance: 5s 6%/s glitch decay storm** |
 
 ---
 
@@ -89,7 +89,7 @@ Roles are strictly differentiated via trade-offs across attack speed, single-hit
 
 High flat defense and the **Rate-Limiting Armor Firewall** block low-tier spam strategies post-40R.
 
-| Round | Boss ID | Name | Attr | Max HP | Flat DEF | Hit Limit (`hitLimit`) | Dampening (`dampening`) | Core Gimmick & Unit Penalty (`v3.6.0`) |
+| Round | Boss ID | Name | Attr | Max HP | Flat DEF | Hit Limit (`hitLimit`) | Dampening (`dampening`) | Core Gimmick & Unit Penalty |
 |:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---|
 | **10R** | `BOSS_10R` | Spam Bot | `BIT` | 8,500 | 5 | 10 hits / 0.25s | 50% | Popup screen obstruction + **Global unit range -20%** |
 | **20R** | `BOSS_20R` | Trojan Core | `SEC` | 30,000 | 15 | 8 hits / 0.25s | 55% | 20% Shield + **Trojan spy infection (atk lock, adjacent atk -25%)** |
@@ -102,24 +102,22 @@ High flat defense and the **Rate-Limiting Armor Firewall** block low-tier spam s
 
 ---
 
-## 5. BIOS Summoner Overclocking System (Lv.1 ~ Lv.10 Gacha Architecture)
+## 5. BIOS Summoner Overclocking System (Lv.1 ~ Lv.8 Automatic Boss Progression)
 
-To eliminate mid-game board saturation and prevent premature Tier 4/5 unit inflation, the probability upgrade system is restructured into a 10-tier progression curve (`GACHA_LEVEL_CONFIG`).
+Players no longer spend currency to manually buy overclock levels. Instead, **every boss defeat automatically promotes the summoner to the next level**, freeing 100% of Byte currency for unit summoning and auto-merges.
 
-### [5-1] Lv.1 ~ Lv.10 Probability & Cost Master Table
+### [5-1] Lv.1 ~ Lv.8 Probability & Boss Unlock Master Table
 
-| Level | 1T (%) | 2T (%) | 3T (%) | 4T (%) | 5T (%) | Upgrade Cost (`cost`) | Cumulative Cost | Milestone & Tactical Role |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
-| **Lv.1** | 100.0% | 0.0% | 0.0% | 0.0% | 0.0% | 120 Byte | 0 Byte | Base BIOS state; 100% T1 minion summon |
-| **Lv.2** | 80.0% | 20.0% | 0.0% | 0.0% | 0.0% | 220 Byte | 120 Byte | Early wave stabilization; 20% T2 infusion |
-| **Lv.3** | 65.0% | 30.0% | 5.0% | 0.0% | 0.0% | 380 Byte | 340 Byte | Post-10R milestone; first 5% T3 glimpse |
-| **Lv.4** | 50.0% | 40.0% | 10.0% | 0.0% | 0.0% | 600 Byte | 720 Byte | Balanced early-mid economy; 10% T3 pull |
-| **Lv.5** | 38.0% | 45.0% | 17.0% | 0.0% | 0.0% | 950 Byte | 1,320 Byte | Mid-game shift; T2 becomes dominant summon |
-| **Lv.6** | 28.0% | 48.0% | 24.0% | 0.0% | 0.0% | **1,800 Byte** | 2,270 Byte | **Pre-40R Apex**: Max T2/T3 odds; 4T strictly locked |
-| **Lv.7** | 20.0% | 48.0% | 29.5% | **2.5%** | 0.0% | **3,200 Byte** | 4,070 Byte | **🌟 4T First Unlock**: Post-40R DDoS gatekeeper (2.5%) |
-| **Lv.8** | 14.0% | 46.0% | 36.0% | **4.0%** | 0.0% | **5,500 Byte** | 7,270 Byte | Post-50R BSOD phase; 4T rate rises to 4.0% |
-| **Lv.9** | 10.0% | 44.0% | 40.0% | **6.0%** | 0.0% | **9,500 Byte** | 12,770 Byte | Post-60R Chernobyl; 4T rate expands to 6.0% |
-| **Lv.10** | **7.0%** | 41.0% | 43.0% | **8.0%** | **1.0%** | **MAX (null)** | 22,270 Byte | **👑 Endgame Overclock**: 4T 8.0% cap + 1.0% 5T Jackpot |
+| Level | 1T (%) | 2T (%) | 3T (%) | 4T (%) | 5T (%) | Upgrade Trigger | Tactical Milestone |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+| **Lv.1** | 100.0% | 0.0% | 0.0% | 0.0% | 0.0% | Game Start (1~10R) | Base state: 100% T1 minion summon |
+| **Lv.2** | 75.0% | 25.0% | 0.0% | 0.0% | 0.0% | **10R Boss Clear** | 25% T2 infusion |
+| **Lv.3** | 55.0% | 35.0% | 10.0% | 0.0% | 0.0% | **20R Boss Clear** | First 10% T3 pull |
+| **Lv.4** | 40.0% | 45.0% | 15.0% | 0.0% | 0.0% | **30R Boss Clear** | T2 becomes dominant summon (45%) |
+| **Lv.5** | 28.0% | 46.0% | 24.0% | **2.0%** | 0.0% | **40R Boss Clear** | **🌟 4T First Unlock**: 2.0% Legendary pull |
+| **Lv.6** | 18.0% | 44.0% | 33.0% | **5.0%** | 0.0% | **50R Boss Clear** | Post-BSOD: 4T rate expands to 5.0% |
+| **Lv.7** | 12.0% | 40.0% | 40.0% | **8.0%** | 0.0% | **60R Boss Clear** | Post-Chernobyl: 4T rate rises to 8.0% |
+| **Lv.8** | **8.0%** | 38.0% | 42.0% | **11.0%** | **1.0%** | **70R Boss Clear** | **👑 MAX Overclock**: 4T 11% + 1.0% Mythic Jackpot |
 
 - **Tier 4 Gating**: Strictly **0.0% across Lv.1 ~ Lv.6**. First unlocks at **Lv.7 (2.5%)**, preventing trivialization of the 40R DDoS Master encounter while rewarding post-40R progression.
 - **Tier 1 Synthesis Buffer**: Retains **7.0% at Lv.10** ensuring low-tier merge materials remain available while dampening high-tier board flood.

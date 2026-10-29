@@ -53,7 +53,7 @@
 							CURSOR DEFENSE
 						</span>
 						<span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-bold">
-							v3.6.0
+							v4.0.2
 						</span>
 					</div>
 				</div>

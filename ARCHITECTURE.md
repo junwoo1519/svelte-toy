@@ -1,6 +1,6 @@
 # 🤖 Architecture & Business Logic Specification (AI Quick Reference)
 
-> **Project**: Cursor Defense (`마우스 포인터 디펜스`)  
+> **Project**: Cursor Defense  
 > **Tech Stack**: Svelte 5 (Runes), TypeScript, HTML5 2D Canvas, Web Audio API, Tailwind CSS, Vite.  
 > **Target Resolution**: 1280 x 720 (16:9 fixed viewport).  
 > **Theme**: Modern Dark Cyber Gaming UI (Crisp 60FPS Vector & Clean HUD, Pretendard Typography, Compact Icon/Numeric UI).
@@ -67,27 +67,26 @@ src/
   - 0.5% chance for `+25 Byte (JACKPOT!)` with golden particles & sound
 - **⏱️ Round Clear & Fast Clear Time Bonus**:
   $$\text{TotalReward} = (20 + \text{currentRound} \times 2.5) + \max(0, \text{round}(\text{roundTimeLeft} \times 0.5))\text{ Byte}$$
-- **⚡ BIOS Summoner Overclocking System (Lv.1 ~ Lv.10 Architecture)**:
-  - **Lv 1 (Base)**: Upgrade 120B | T1: 100%
-  - **Lv 2 (Early I)**: Upgrade 220B | T1: 80%, T2: 20%
-  - **Lv 3 (Early II)**: Upgrade 380B | T1: 65%, T2: 30%, T3: 5%
-  - **Lv 4 (Mid I)**: Upgrade 600B | T1: 50%, T2: 40%, T3: 10%
-  - **Lv 5 (Mid II)**: Upgrade 950B | T1: 38%, T2: 45%, T3: 17%
-  - **Lv 6 (Upper I - Pre-40R Peak)**: Upgrade 1,800B | T1: 28%, T2: 48%, T3: 24% (4T Locked at 0%)
-  - **Lv 7 (Upper II - 🌟 4T 2.5% Unlock)**: Upgrade 3,200B | T1: 20%, T2: 48%, T3: 29.5%, T4: 2.5% (Post-40R DDoS Gatekeeper)
-  - **Lv 8 (Expert I)**: Upgrade 5,500B | T1: 14%, T2: 46%, T3: 36%, T4: 4.0%
-  - **Lv 9 (Expert II)**: Upgrade 9,500B | T1: 10%, T2: 44%, T3: 40%, T4: 6.0%
-  - **Lv 10 (MAX Overclock)**: MAX (null) | T1: 7.0% buffer, T2: 41%, T3: 43%, T4: 8.0%, T5: 1.0% Jackpot
+- **⚡ BIOS Summoner Overclocking System (Lv.1 ~ Lv.8 Boss Auto-Progression)**:
+  - **Lv 1 (Base, 1~10R)**: T1: 100%
+  - **Lv 2 (10R Boss Clear)**: T1: 75%, T2: 25%
+  - **Lv 3 (20R Boss Clear)**: T1: 55%, T2: 35%, T3: 10%
+  - **Lv 4 (30R Boss Clear)**: T1: 40%, T2: 45%, T3: 15%
+  - **Lv 5 (40R Boss Clear)**: T1: 28%, T2: 46%, T3: 24%, 4T: 2.0% (🌟 4T First Unlock)
+  - **Lv 6 (50R Boss Clear)**: T1: 18%, T2: 44%, T3: 33%, 4T: 5.0%
+  - **Lv 7 (60R Boss Clear)**: T1: 12%, T2: 40%, T3: 40%, 4T: 8.0%
+  - **Lv 8 (70R Boss Clear MAX)**: T1: 8.0%, T2: 38%, T3: 42%, 4T: 11.0%, 5T: 1.0% Jackpot
+  - **Cost**: 0 Byte (Automated reward upon boss defeat, freeing 100% of gold for summoning).
 - **Refund on Sell**: T1 = 20B, T2 = 40B, T3 = 80B, T4 = 160B, T5 = 320B.
 
-### 3.2 Unit Synthesis & 100% Guaranteed Merge System
-- **Deterministic Fail-Free Merges**:
-  - **T1 + T1**: 🌟 **Quantum Jump (2%)** $\rightarrow$ T3 / ✅ **Guaranteed Merge (98%)** $\rightarrow$ T2
-  - **T2 + T2**: 🌟 **Quantum Jump (2%)** $\rightarrow$ T4 / ✅ **Guaranteed Merge (98%)** $\rightarrow$ T3
-  - **T3 + T3**: 🌟 **Quantum Jump (1%)** $\rightarrow$ T5 Mythic / ✅ **Guaranteed Merge (99%)** $\rightarrow$ T4
-  - **T4 + T4 (Legendary Mythic Awakening & Board Jam Relief)**:
-    - 🌟 **Duplicate Pair (Designated Recipe)**: Evolves into designated **Tier 5 Hidden Mythic** (Wheel $\rightarrow$ Blackhole Spinner, Wand $\rightarrow$ Quantum Eraser, Admin $\rightarrow$ Root Admin / SUDO, Console $\rightarrow$ Cheat Engine, Taskmaster $\rightarrow$ Ctrl+Alt+Del).
-    - 🎲 **Different 4T Pair (Board Jam Relief)**: 100% guaranteed synthesis into a **random 1 of 5 Tier 5 Hidden Mythics**, completely preventing end-game board congestion locks.
+### 3.2 Unit Synthesis & Instant Auto-Merge System
+- **⚡ Instant Auto-Merge & Cascading Chain Reaction**:
+  - The instant a unit is summoned into a socket, if another identical unit (`unitId` match) exists on the board, it automatically merges into a higher tier.
+  - **Chain Combos**: If the newly evolved unit also matches another unit on the board, it cascades into consecutive auto-merges (`⚡ CHAIN COMBO x2!`, `🌟 TRIPLE MERGE x3!`).
+  - **Quantum Jump**: T1/T2 merges retain a 2% chance, and T3 a 1% chance, for a +2 Tier Quantum Jump.
+- **T4 + T4 (Legendary Mythic Awakening & Board Jam Relief)**:
+  - 🌟 **Duplicate Pair (Designated Recipe)**: Evolves into designated **Tier 5 Hidden Mythic** (Wheel $\rightarrow$ Blackhole Spinner, Wand $\rightarrow$ Quantum Eraser, Admin $\rightarrow$ Root Admin, Console $\rightarrow$ Cheat Engine, Taskmaster $\rightarrow$ Ctrl+Alt+Del).
+  - 🎲 **Different 4T Pair (Board Jam Relief)**: When board is crowded ($\ge 10$ units), different 4T pairs auto-merge into a random 1 of 5 Tier 5 Hidden Mythics.
 
 ### 3.3 Fast Wave Clear & Round Flow
 1. **Round Duration**: Standard rounds: **25.0s** (Boss rounds: 60.0s). Each standard round spawns $30 + \text{round} \times 0.5$ mobs (1R 30 mobs $\rightarrow$ 80R 70 mobs, base HP 75) at interval $0.40\text{s} \sim 0.22\text{s}$. (Boss rounds spawn 14~18 fast minions at 0.22s).
@@ -101,14 +100,14 @@ src/
    ```
 3. **Overload Loss Condition**: `player.monsters.length >= 100` $\rightarrow$ Immediate Defeat (Track Overload Crash).
 
-### 3.4 Boss Rounds & Tactical Warp Protocol
+### 3.4 Boss Rounds & Lucky Boss Warp (RNG 5-Unit Draft)
 - **Boss Rounds**: Rounds 10, 20, 30, 40, 50, 60, 70, 80.
 - **Entry Warning**: `GameEngine.bossWarningTimer` sets 3.2s full-screen emergency alert with siren strobe.
-- **Tactical Double-Click Boss Warp Protocol (Max 5 Units)**:
-  - Double-click unit in base socket $\rightarrow$ Warps unit to boss room flank pad (if `currentlyWarped < 5` and boss active).
-  - Double-click again in boss room or socket $\rightarrow$ Recalls unit back to base field.
-  - AI Partner automatically selects and warps top 5 highest DPS units.
-  - On boss defeat or round transition, all warped units automatically return to base sockets.
+- **🎲 Lucky Boss Warp Protocol (Max 5 Units Auto-Draft)**:
+  - When a boss round begins, 5 units are randomly selected from the player's board and warped into the boss chamber.
+  - Pure luck: weak 1T minions or powerful 5T mythics can be drafted!
+  - On boss defeat or round transition, all warped units automatically recall back to base sockets.
+  - Defeating each boss triggers immediate +1 Level BIOS Gacha auto-upgrade with victory fanfare.
 
 ---
 
@@ -175,7 +174,10 @@ $$\text{FinalDmg} = \max\left(1, (\text{Damage} \times \text{CritMultiplier} \ti
      4. 📜 **`CHANGELOG.md`**: Latest release header and detailed records (`vX.X.X`)
      5. 📘 **`README.md`**: Top version badge (`version-X.X.X-blue.svg`)
      6. ⚖️ **`BALANCE.md`**: Top version tag and unit/boss master tables (`vX.X.X`)
-2. **Svelte 5 Runes**: Always use `$state`, `$derived`, `$props`. Avoid legacy `export let` or `$:`.
-3. **State Updates**: `GameEngine` runs decoupled at 60fps. Always call `gameStore.sync()` or `engine.notifyChange()` after mutating game state outside canvas loop.
-4. **No External Assets Needed**: All visual cursors, monsters, projectiles, and sounds are 100% procedurally synthesized in vector Canvas 2D and Web Audio API (`SoundManager.ts`).
-5. **Build Verification**: Run `npm run check` and `npm run build` on Windows to ensure 0 errors.
+2. **English Language Documentation Rule (CRITICAL RULE)**:
+   - **All Markdown documentation files (`*.md`) across the repository (`README.md`, `CHANGELOG.md`, `BALANCE.md`, `ARCHITECTURE.md`, etc.) MUST be written strictly in English.**
+   - All release notes, changelog updates, mathematical datasheets, and architectural specifications must maintain consistent, professional English terminology.
+3. **Svelte 5 Runes**: Always use `$state`, `$derived`, `$props`. Avoid legacy `export let` or `$:`.
+4. **State Updates**: `GameEngine` runs decoupled at 60fps. Always call `gameStore.sync()` or `engine.notifyChange()` after mutating game state outside canvas loop.
+5. **No External Assets Needed**: All visual cursors, monsters, projectiles, and sounds are 100% procedurally synthesized in vector Canvas 2D and Web Audio API (`SoundManager.ts`).
+6. **Build Verification**: Run `npm run check` and `npm run build` on Windows to ensure 0 errors.

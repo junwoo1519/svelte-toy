@@ -310,7 +310,8 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 			type: 'PERCENT_HP_EXECUTE',
 			percentRate: 0.03,
 			executeThreshold: 0.18,
-			description: '적 현재 체력 3% 추가 피해 + 체력 18% 이하 즉시 처형'
+			procChance: 0.10,
+			description: '적 현재 체력 3% 추가 피해 + 체력 18% 이하 시 10% 확률 즉시 처형'
 		}
 	},
 	T4_ADMIN: {
@@ -327,10 +328,10 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 		archetype: 'HEAVY',
 		skill: {
 			type: 'PERIODIC_BURST',
-			cooldown: 6.0,
 			critChance: 1.0,
 			multiplier: 4.0,
-			description: '6타마다 400% 확정 치명타 (5,000 대미지 핵폭딜)'
+			procChance: 0.08,
+			description: '공격 시 8% 확률로 400% 치명타 (5,000 대미지 핵폭딜)'
 		}
 	},
 	T4_CONSOLE: {
@@ -392,8 +393,8 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 			executeHpRate: 0.25,
 			executeThreshold: 0.15,
 			bossArmorBreak: 0.5,
-			bossStunDuration: 2.0,
-			description: '[히든] 전 맵 아군 공속 +35%, 치명타 +20% | 4타마다 주변 320px 적 체력 25% 즉시 삭제 및 15% 이하 즉사 | 보스 방어력 50% 파괴 & 2% 최대체력 피해'
+			procChance: 0.05,
+			description: '[히든] 전 맵 아군 공속 +35%, 치명타 +20% | 공격 시 5% 확률 SIGKILL (주변 320px 적 체력 25% 삭제 & 15% 이하 즉사 / 보스 방깎 50% & 2% 파괴)'
 		}
 	},
 	HIDDEN_BSOD_WHEEL: {
@@ -411,9 +412,9 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 		skill: {
 			type: 'EVENT_HORIZON',
 			slowRate: 0.5,
-			timeStopInterval: 6.0,
 			timeStopDuration: 1.2,
-			description: '[히든] 주변 260px 적군 이속 50% 상시 둔화 + 0.45초 주기 520 파동 피해 (보스 3배) | 6초마다 1.2초간 범위 내 모든 적 시간 정지(완전 기절)'
+			procChance: 0.05,
+			description: '[히든] 주변 260px 적군 이속 50% 상시 둔화 + 520 파동 피해 (보스 3배) | 펄스 시 5% 확률로 1.2초 시간 정지 (완전 기절)'
 		}
 	},
 	HIDDEN_QUANTUM_ERASER: {
@@ -433,7 +434,8 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 			chainCount: 6,
 			percentHpDamage: 0.05,
 			executeThreshold: 0.25,
-			description: '[히든] 최대 6마리 동시 레이저 타격 | 적 현재 체력 5% 추가 피해 + 체력 25% 이하 즉시 픽셀 삭제(처형) (+2B) | 보스 0.4% 최대체력 피해'
+			procChance: 0.06,
+			description: '[히든] 최대 6마리 동시 레이저 타격 | 적 현재 체력 5% 추가 피해 + 타격 시 6% 확률로 25% 이하 픽셀 즉시 삭제(처형) (+2B)'
 		}
 	},
 	HIDDEN_ROOT_ADMIN: {
@@ -451,10 +453,10 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 		skill: {
 			type: 'SUDO_FORCE',
 			critChance: 1.0,
-			burstInterval: 3,
 			burstMultiplier: 5.0,
 			auraDamageBonus: 0.4,
-			description: '[히든] 100% 확정 치명타 | 3타마다 500% (보스 750%) 슈퍼 핵폭딜 (18,000 / 27,000 대미지) | 인접한 모든 아군 공격력 +40% 버프 오라'
+			procChance: 0.08,
+			description: '[히든] 100% 확정 치명타 | 공격 시 8% 확률로 500% (보스 750%) 슈퍼 핵폭딜 (18,000 / 27,000 대미지) | 인접 아군 공격력 +40%'
 		}
 	},
 	HIDDEN_DEBUG_CONSOLE: {
@@ -474,7 +476,8 @@ export const UNITS_MASTER: Record<string, UnitMaster> = {
 			armorDownRate: 0.7,
 			damageAmpRate: 0.5,
 			decayPercentPerSec: 0.06,
-			description: '[히든] 범위 내 모든 적 방어력 70% 영구 파괴 + 받는 피해 50% 증폭 오라 | 6초마다 범위 내 모든 적 5초간 초당 최대 체력 6% 부식 피해 | 보스 0.3% 최대체력 피해'
+			procChance: 0.06,
+			description: '[히든] 범위 내 적 방어력 70% 파괴 + 받는 피해 50% 증폭 오라 | 펄스 시 6% 확률로 5초간 초당 6% 부식 피해 디버프 폭풍'
 		}
 	},
 };
@@ -547,63 +550,51 @@ export const GACHA_LEVEL_CONFIG: Record<
 	{ cost: number | null; rates: GachaRates; label: string; shortRates: string }
 > = {
 	1: {
-		cost: 120, // Lv1 -> Lv2
+		cost: null,
 		rates: { t1: 1.0, t2: 0.0, t3: 0.0, t4: 0.0, t5: 0.0 },
 		label: 'Lv.1 (기본)',
 		shortRates: 'T1:100%'
 	},
 	2: {
-		cost: 220, // Lv2 -> Lv3
-		rates: { t1: 0.8, t2: 0.2, t3: 0.0, t4: 0.0, t5: 0.0 },
-		label: 'Lv.2 (초급 I)',
-		shortRates: 'T1:80% T2:20%'
+		cost: null,
+		rates: { t1: 0.75, t2: 0.25, t3: 0.0, t4: 0.0, t5: 0.0 },
+		label: 'Lv.2 (10R 격퇴)',
+		shortRates: 'T1:75% T2:25%'
 	},
 	3: {
-		cost: 380, // Lv3 -> Lv4
-		rates: { t1: 0.65, t2: 0.3, t3: 0.05, t4: 0.0, t5: 0.0 },
-		label: 'Lv.3 (초급 II)',
-		shortRates: 'T1:65% T2:30% T3:5%'
+		cost: null,
+		rates: { t1: 0.55, t2: 0.35, t3: 0.1, t4: 0.0, t5: 0.0 },
+		label: 'Lv.3 (20R 격퇴)',
+		shortRates: 'T1:55% T2:35% T3:10%'
 	},
 	4: {
-		cost: 600, // Lv4 -> Lv5
-		rates: { t1: 0.5, t2: 0.4, t3: 0.1, t4: 0.0, t5: 0.0 },
-		label: 'Lv.4 (중급 I)',
-		shortRates: 'T1:50% T2:40% T3:10%'
+		cost: null,
+		rates: { t1: 0.4, t2: 0.45, t3: 0.15, t4: 0.0, t5: 0.0 },
+		label: 'Lv.4 (30R 격퇴)',
+		shortRates: 'T1:40% T2:45% T3:15%'
 	},
 	5: {
-		cost: 950, // Lv5 -> Lv6
-		rates: { t1: 0.38, t2: 0.45, t3: 0.17, t4: 0.0, t5: 0.0 },
-		label: 'Lv.5 (중급 II)',
-		shortRates: 'T1:38% T2:45% T3:17%'
+		cost: null,
+		rates: { t1: 0.28, t2: 0.46, t3: 0.24, t4: 0.02, t5: 0.0 },
+		label: 'Lv.5 (40R 격퇴 - 4T 해금)',
+		shortRates: 'T2:46% T3:24% T4:2%'
 	},
 	6: {
-		cost: 1800, // Lv6 -> Lv7 (Pre-40R apex)
-		rates: { t1: 0.28, t2: 0.48, t3: 0.24, t4: 0.0, t5: 0.0 },
-		label: 'Lv.6 (상급 I - 4T 잠금)',
-		shortRates: 'T1:28% T2:48% T3:24%'
+		cost: null,
+		rates: { t1: 0.18, t2: 0.44, t3: 0.33, t4: 0.05, t5: 0.0 },
+		label: 'Lv.6 (50R 격퇴)',
+		shortRates: 'T2:44% T3:33% T4:5%'
 	},
 	7: {
-		cost: 3200, // Lv7 -> Lv8 (Post-40R first 4T unlock)
-		rates: { t1: 0.2, t2: 0.48, t3: 0.295, t4: 0.025, t5: 0.0 },
-		label: 'Lv.7 (상급 II - 4T 2.5% 해금)',
-		shortRates: 'T2:48% T3:29.5% T4:2.5%'
+		cost: null,
+		rates: { t1: 0.12, t2: 0.4, t3: 0.4, t4: 0.08, t5: 0.0 },
+		label: 'Lv.7 (60R 격퇴)',
+		shortRates: 'T3:40% T4:8%'
 	},
 	8: {
-		cost: 5500, // Lv8 -> Lv9
-		rates: { t1: 0.14, t2: 0.46, t3: 0.36, t4: 0.04, t5: 0.0 },
-		label: 'Lv.8 (전문 I - 4T 4%)',
-		shortRates: 'T2:46% T3:36% T4:4%'
-	},
-	9: {
-		cost: 9500, // Lv9 -> Lv10
-		rates: { t1: 0.1, t2: 0.44, t3: 0.4, t4: 0.06, t5: 0.0 },
-		label: 'Lv.9 (전문 II - 4T 6%)',
-		shortRates: 'T3:40% T4:6%'
-	},
-	10: {
-		cost: null, // MAX
-		rates: { t1: 0.07, t2: 0.41, t3: 0.43, t4: 0.08, t5: 0.01 },
-		label: 'Lv.10 MAX (4T: 8%, 5T 잭팟: 1%)',
-		shortRates: 'T3:43% T4:8% T5:1%'
+		cost: null,
+		rates: { t1: 0.08, t2: 0.38, t3: 0.42, t4: 0.11, t5: 0.01 },
+		label: 'Lv.8 MAX (5T 잭팟 1%)',
+		shortRates: 'T3:42% T4:11% T5:1%'
 	}
 };

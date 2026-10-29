@@ -16,15 +16,6 @@
 				} else {
 					if (gameStore.canSummonP1) gameStore.summonP1();
 				}
-			} else if (e.code === 'KeyU' || (e.shiftKey && e.code === 'Space')) {
-				// Overclock Upgrade
-				e.preventDefault();
-				const isLocalP2 = gameStore.gameMode === 'ONLINE_COOP' && gameStore.netRole === 'p2';
-				if (isLocalP2) {
-					if (gameStore.canUpgradeGachaP2) gameStore.upgradeGachaP2();
-				} else {
-					if (gameStore.canUpgradeGachaP1) gameStore.upgradeGachaP1();
-				}
 			}
 		};
 		window.addEventListener('keydown', handleKeyDown);
@@ -125,7 +116,7 @@
 					<div class="w-full text-[10px] font-sans text-slate-400 bg-slate-950/50 border border-slate-800/50 px-2.5 py-0.5 rounded flex items-center gap-2 overflow-hidden flex-nowrap">
 						<span class="text-yellow-400 font-bold flex-shrink-0 text-[10px]">★ TIP</span>
 						<span class="text-slate-600 flex-shrink-0 text-[10px]">|</span>
-						<span class="truncate text-[10px] text-slate-400">동일 유닛 드래그: 100% 확정 합성 / 유닛 더블클릭: 보스방 워프 배치 (최대 5기)</span>
+						<span class="truncate text-[10px] text-slate-400">동일 유닛 2기 자동 합성 (연쇄 콤보) | 보스 출현 시 무작위 5기 자동 참전 | 보스 격퇴 시 소환기 자동 승급</span>
 					</div>
 				</div>
 			</div>
@@ -139,16 +130,16 @@
 			<span class="text-slate-300 text-[11px] font-sans font-bold">소환</span>
 		</span>
 		<span class="flex items-center gap-2 bg-slate-900/90 border border-slate-800/90 px-2.5 py-1.5 text-slate-300 rounded-lg shadow-sm">
-			<span class="px-1.5 py-0.5 bg-slate-800 text-emerald-400 rounded font-black text-[10px]">U</span>
-			<span class="text-slate-300 text-[11px] font-sans font-bold">강화</span>
+			<span class="px-1.5 py-0.5 bg-slate-800 text-emerald-400 rounded font-black text-[10px]">🎲</span>
+			<span class="text-slate-300 text-[11px] font-sans font-bold">자동합성</span>
 		</span>
 		<span class="flex items-center gap-2 bg-slate-900/90 border border-slate-800/90 px-2.5 py-1.5 text-slate-300 rounded-lg shadow-sm">
-			<span class="px-1.5 py-0.5 bg-slate-800 text-sky-400 rounded font-black text-[10px]">Drag</span>
-			<span class="text-slate-300 text-[11px] font-sans font-bold">합성</span>
+			<span class="px-1.5 py-0.5 bg-slate-800 text-sky-400 rounded font-black text-[10px]">⚡</span>
+			<span class="text-slate-300 text-[11px] font-sans font-bold">자동승급</span>
 		</span>
 		<span class="flex items-center gap-2 bg-slate-900/90 border border-slate-800/90 px-2.5 py-1.5 text-slate-300 rounded-lg shadow-sm">
-			<span class="px-1.5 py-0.5 bg-slate-800 text-purple-400 rounded font-black text-[10px]">2x</span>
-			<span class="text-slate-300 text-[11px] font-sans font-bold">워프</span>
+			<span class="px-1.5 py-0.5 bg-slate-800 text-purple-400 rounded font-black text-[10px]">⚔️</span>
+			<span class="text-slate-300 text-[11px] font-sans font-bold">5기참전</span>
 		</span>
 	</div>
 </footer>

@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>🎯 CURSOR DEFENSE (v3.6.0) [80라운드 대확장 & 확정 합성 디펜스]</title>
+	<title>🎯 CURSOR DEFENSE (v4.0.2) [자동 연쇄 합성 & 럭키 보스 워프 디펜스]</title>
 </svelte:head>
 
 <main class="game-screen flex items-center justify-center p-3 select-none">
